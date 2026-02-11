@@ -1,0 +1,203 @@
+.logo {
+  position: absolute;
+  top: 30px;
+  left: 50px;
+
+  font-family: "Bebas Neue", sans-serif;
+
+  font-size: 48px;
+
+  /* Stretch effect */
+  letter-spacing: 6px;
+  transform: scaleX(1.2);
+
+  color: #e50914;
+  font-weight: bold;
+
+  z-index: 2;
+
+  text-shadow: 0 0 10px rgba(229, 9, 20, 0.6);
+}
+
+
+
+/* ========== PAGE BACKGROUND ========== */
+
+
+.auth {
+  height: 100vh;
+
+  /* If using imported bg via JSX inline style,
+     this will act as fallback */
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+}
+
+/* Dark overlay */
+.auth::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+}
+
+/* ========== LOGO ========== */
+
+.logo {
+  position: absolute;
+  top: 30px;
+  left: 50px;
+  color: red;
+  font-size: 34px;
+  font-weight: bold;
+  z-index: 2;
+  letter-spacing: 2px;
+}
+
+/* ========== AUTH CARD ========== */
+
+.auth-card {
+  position: relative;
+  z-index: 2;
+  width: 380px;
+  padding: 45px;
+
+  border-radius: 16px;
+
+  /* Glass effect */
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(18px);
+
+  /* Border glow */
+  border: 1px solid rgba(255, 255, 255, 0.15);
+
+  /* Shadow depth */
+  box-shadow:
+    0 0 40px rgba(0, 0, 0, 0.8),
+    0 0 80px rgba(0, 0, 0, 0.6);
+
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+
+  transition: 0.3s ease;
+}
+
+/* Hover lift */
+.auth-card:hover {
+  transform: translateY(-4px);
+}
+
+/* ========== TITLE ========== */
+
+.auth-card h2 {
+  color: white;
+  font-size: 26px;
+  margin-bottom: 10px;
+}
+
+/* ========== INPUTS ========== */
+
+.auth-card input {
+  padding: 14px;
+  border-radius: 6px;
+  border: none;
+  outline: none;
+
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 14px;
+
+  transition: 0.2s ease;
+}
+
+/* Input focus glow */
+.auth-card input:focus {
+  background: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 0 10px rgba(255, 0, 0, 0.4);
+}
+
+/* ========== SIGN IN BUTTON ========== */
+
+.auth-btn {
+  background: linear-gradient(
+    135deg,
+    #ff0000,
+    #ff4d4d
+  );
+
+  padding: 14px;
+  border: none;
+  border-radius: 6px;
+
+  color: white;
+  font-weight: bold;
+  font-size: 15px;
+
+  cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.auth-btn:hover {
+  background: linear-gradient(
+    135deg,
+    #ff1a1a,
+    #ff6666
+  );
+  transform: scale(1.02);
+}
+
+/* ========== DIVIDER ========== */
+
+.divider {
+  text-align: center;
+  position: relative;
+  color: gray;
+  font-size: 13px;
+}
+
+.divider span {
+  padding: 0 10px;
+}
+
+/* ========== GOOGLE BUTTON ========== */
+
+.google-btn {
+  background: white;
+  color: black;
+  padding: 12px;
+  border-radius: 6px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.google-btn:hover {
+  background: #f2f2f2;
+}
+
+/* ========== TOGGLE TEXT ========== */
+
+.toggle {
+  color: #aaa;
+  font-size: 14px;
+  text-align: center;
+}
+
+.toggle span {
+  color: white;
+  cursor: pointer;
+  font-weight: 500;
+}
