@@ -175,6 +175,17 @@
   color: #fff;
   font-size: 12px;
   letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background 0.2s ease,
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+
+.hero-tag:hover {
+  background: rgba(255, 255, 255, 0.18);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px
+    rgba(0, 0, 0, 0.6);
 }
 
 /* ===============================
@@ -241,11 +252,71 @@
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
 }
 
+.video-detail-left {
+  position: relative;
+  background: #000;
+}
+
 .video-detail-left img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.detail-poster-wrapper {
+  position: absolute;
+  inset: 0;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+.detail-poster-wrapper:disabled {
+  cursor: default;
+}
+
+.detail-poster-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.detail-poster-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(
+    circle at center,
+    rgba(0, 0, 0, 0.35),
+    rgba(0, 0, 0, 0.8)
+  );
+  color: #fff;
+  pointer-events: none;
+}
+
+.detail-play-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+}
+
+.detail-play-icon {
+  font-size: 30px;
+}
+
+.detail-play-label {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
 .video-detail-right {
@@ -391,6 +462,27 @@
 .genre-tag.active {
   background: #fff;
   color: #000;
+}
+
+.clear-filters-btn {
+  margin-left: 50px;
+  margin-top: 10px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: transparent;
+  color: #fff;
+  font-size: 13px;
+  cursor: pointer;
+  transition: background 0.2s ease,
+    color 0.2s ease,
+    transform 0.2s ease;
+}
+
+.clear-filters-btn:hover {
+  background: #fff;
+  color: #000;
+  transform: translateY(-1px);
 }
 
 /* ===============================

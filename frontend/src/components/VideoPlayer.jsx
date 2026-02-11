@@ -1,9 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import {
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 import Hls from "hls.js";
 import { FaCog, FaExpand, FaCompress } from "react-icons/fa";
 import "../styles/Browse.css";
 
-const VideoPlayer = ({ src }) => {
+const VideoPlayer = forwardRef(({ src }, ref) => {
   const containerRef = useRef(null);
   const videoRef = useRef(null);
   const hlsRef = useRef(null);
@@ -52,6 +58,19 @@ const VideoPlayer = ({ src }) => {
       }
     };
   }, [src]);
+
+  // Expose basic controls to parent (e.g. to start playback
+  // when the user clicks the big overlay play button).
+  useImperativeHandle(ref, () => ({
+    play: () => {
+      const video = videoRef.current;
+      if (!video) return;
+      const p = video.play();
+      if (p && typeof p.catch === "function") {
+        p.catch(() => {});
+      }
+    },
+  }));
 
   // Keep track of fullscreen state so we can toggle the icon and
   // ensure our custom controls (settings) remain visible in fullscreen.
@@ -188,7 +207,7 @@ const VideoPlayer = ({ src }) => {
       )}
     </div>
   );
-};
+});
 
 export default VideoPlayer;
 

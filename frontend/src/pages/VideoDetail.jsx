@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   useNavigate,
   useParams,
@@ -11,9 +11,12 @@ import "../styles/Browse.css";
 const VideoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const playerRef = useRef(null);
   const [video, setVideo] = useState(null);
   const [manifestUrl, setManifestUrl] =
     useState(null);
+  const [showOverlay, setShowOverlay] =
+    useState(true);
 
   useEffect(() => {
     if (!id) return;
@@ -77,9 +80,50 @@ const VideoDetail = () => {
             </button>
             <div className="video-detail-left">
               {manifestUrl ? (
-                <VideoPlayer src={manifestUrl} />
+                <>
+                  <VideoPlayer
+                    ref={playerRef}
+                    src={manifestUrl}
+                  />
+
+                  {showOverlay && (
+                    <button
+                      type="button"
+                      className="detail-poster-wrapper"
+                      onClick={() => {
+                        if (!manifestUrl)
+                          return;
+                        setShowOverlay(false);
+                        if (playerRef.current) {
+                          playerRef.current.play?.();
+                        }
+                      }}
+                    >
+                      <img
+                        className="detail-poster-image"
+                        src={
+                          video.banner_url ||
+                          video.thumbnail_url
+                        }
+                        alt={video.title}
+                      />
+
+                      <div className="detail-poster-overlay">
+                        <div className="detail-play-button">
+                          <span className="detail-play-icon">
+                            ▶
+                          </span>
+                          <span className="detail-play-label">
+                            Play
+                          </span>
+                        </div>
+                      </div>
+                    </button>
+                  )}
+                </>
               ) : (
                 <img
+                  className="detail-poster-image"
                   src={
                     video.banner_url ||
                     video.thumbnail_url
@@ -109,6 +153,13 @@ const VideoDetail = () => {
                       <span
                         key={tag}
                         className="hero-tag"
+                        onClick={() =>
+                          navigate(
+                            `/browse?tag=${encodeURIComponent(
+                              tag
+                            )}`
+                          )
+                        }
                       >
                         {tag}
                       </span>

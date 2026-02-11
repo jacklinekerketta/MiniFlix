@@ -7,6 +7,7 @@ import {
 import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
 import VideoDetail from "./pages/VideoDetail";
+import SearchResults from "./pages/SearchResults";
 
 function App() {
   return (
@@ -25,6 +26,11 @@ function App() {
         <Route
           path="/video/:id"
           element={<VideoDetail />}
+        />
+
+        <Route
+          path="/search"
+          element={<SearchResults />}
         />
       </Routes>
     </Router>

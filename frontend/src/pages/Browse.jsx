@@ -3,32 +3,91 @@ import {
   useMemo,
   useState,
 } from "react";
+import {
+  useNavigate,
+  useSearchParams,
+} from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
 import Row from "../components/Row";
 import { api } from "../services/api";
 
-const TAGS = [
-  "Sci‑Fi",
-  "Fantasy",
-  "Action",
-  "Comedy",
-  "Drama",
-];
-
 const Browse = () => {
+  const navigate = useNavigate();
+  const [searchParams, setSearchParams] =
+    useSearchParams();
+
+  const initialTag =
+    searchParams.get("tag");
+  const initialQuery =
+    searchParams.get("q") || "";
+
   const [videos, setVideos] =
     useState([]);
   const [activeTag, setActiveTag] =
-    useState(null);
+    useState(initialTag);
   const [searchTerm, setSearchTerm] =
-    useState("");
+    useState(initialQuery);
 
   useEffect(() => {
     api.get("/videos").then((res) =>
       setVideos(res.data)
     );
   }, []);
+
+  const updateUrlFilters = (
+    tag,
+    search
+  ) => {
+    const params = {};
+    if (tag) params.tag = tag;
+    if (search && search.trim()) {
+      params.q = search.trim();
+    }
+    setSearchParams(params, {
+      replace: true,
+    });
+  };
+
+  const handleSearchChange = (
+    value
+  ) => {
+    setSearchTerm(value);
+    updateUrlFilters(activeTag, value);
+  };
+
+  const handleSearchSubmit = (
+    value
+  ) => {
+    const term = value
+      .trim()
+      .toLowerCase();
+    if (!term) return;
+
+    navigate(
+      `/search?q=${encodeURIComponent(
+        value.trim()
+      )}`
+    );
+  };
+
+  const handleTagClick = (tag) => {
+    setActiveTag((prev) => {
+      const next =
+        prev === tag ? null : tag;
+      updateUrlFilters(next, searchTerm);
+      return next;
+    });
+  };
+
+  const handleClearFilters = () => {
+    setActiveTag(null);
+    setSearchTerm("");
+    setSearchParams(
+      {},
+      { replace: true }
+    );
+  };
 
   const matchesSearch = (video) => {
     const term = searchTerm
@@ -79,7 +138,9 @@ const Browse = () => {
   return (
     <div className="browse">
       <Navbar
-        onSearchChange={setSearchTerm}
+        onSearchChange={handleSearchChange}
+        onSearchSubmit={handleSearchSubmit}
+        searchValue={searchTerm}
       />
       <Hero />
 
@@ -94,18 +155,23 @@ const Browse = () => {
                 : "")
             }
             onClick={() =>
-              setActiveTag(
-                (prev) =>
-                  prev === tag
-                    ? null
-                    : tag
-              )
+              handleTagClick(tag)
             }
           >
             {tag}
           </span>
         ))}
       </div>
+
+      {(activeTag ||
+        searchTerm.trim()) && (
+        <button
+          className="clear-filters-btn"
+          onClick={handleClearFilters}
+        >
+          Clear all filters
+        </button>
+      )}
 
       {activeTag && (
         <Row

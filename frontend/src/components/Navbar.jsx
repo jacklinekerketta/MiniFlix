@@ -6,16 +6,37 @@ import { api } from "../services/api";
 import { logoutUser } from "../features/auth/authSlice";
 import "../styles/Browse.css";
 
-const Navbar = ({ onSearchChange }) => {
-  const [query, setQuery] = useState("");
+const Navbar = ({
+  onSearchChange,
+  onSearchSubmit,
+  searchValue,
+}) => {
+  const [internalQuery, setInternalQuery] =
+    useState("");
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const query =
+    searchValue ?? internalQuery;
+
   const handleChange = (e) => {
     const value = e.target.value;
-    setQuery(value);
+
+    if (searchValue === undefined) {
+      setInternalQuery(value);
+    }
+
     if (onSearchChange) {
       onSearchChange(value);
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (
+      e.key === "Enter" &&
+      onSearchSubmit
+    ) {
+      onSearchSubmit(query);
     }
   };
 
@@ -53,6 +74,7 @@ const Navbar = ({ onSearchChange }) => {
             placeholder="Search by title or tag..."
             value={query}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
           />
         </div>
 

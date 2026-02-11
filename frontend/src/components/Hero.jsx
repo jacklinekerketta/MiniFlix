@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { api } from "../services/api";
 import "../styles/Browse.css";
 
 const Hero = () => {
   const [video, setVideo] =
     useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     api.get("/videos").then((res) => {
@@ -13,6 +15,12 @@ const Hero = () => {
   }, []);
 
   if (!video) return null;
+
+  const handlePlay = () => {
+    if (!video.id) return;
+    // Reuse the same HLS-based detail player as the rest of the app
+    navigate(`/video/${video.id}`);
+  };
 
   return (
     <div
@@ -47,14 +55,7 @@ const Hero = () => {
         <div className="hero-buttons">
           <button
             className="play-btn"
-            onClick={() => {
-              if (!video.hls_manifest_url) return;
-              // Open the HLS manifest URL in a new tab/window
-              window.open(
-                video.hls_manifest_url,
-                "_blank"
-              );
-            }}
+            onClick={handlePlay}
           >
             Play
           </button>

@@ -1,6 +1,5 @@
 import { db } from "../config/db.js";
 
-
 // ➕ Add Video
 export const addVideo = (req, res) => {
   const {
@@ -38,6 +37,7 @@ export const addVideo = (req, res) => {
   );
 };
 
+// Public listings / metadata – DO NOT leak the internal manifest URL.
 export const getVideos = (req, res) => {
   db.query(
     `SELECT v.*, 
@@ -48,10 +48,18 @@ export const getVideos = (req, res) => {
      GROUP BY v.id`,
     (err, results) => {
       if (err) return res.status(500).json(err);
-      res.json(results);
+
+      const safeResults = results.map((row) => {
+        // Strip the manifest URL before sending to the client
+        const { hls_manifest_url, ...rest } = row;
+        return rest;
+      });
+
+      res.json(safeResults);
     }
   );
 };
+
 export const getVideoById = (req, res) => {
   const { id } = req.params;
 
@@ -66,10 +74,17 @@ export const getVideoById = (req, res) => {
     [id],
     (err, results) => {
       if (err) return res.status(500).json(err);
-      res.json(results[0]);
+      if (!results || results.length === 0)
+        return res.status(404).json("Video not found");
+
+      const { hls_manifest_url, ...rest } =
+        results[0];
+
+      res.json(rest);
     }
   );
 };
+
 export const searchVideos = (req, res) => {
   const { q } = req.query;
 
@@ -79,10 +94,17 @@ export const searchVideos = (req, res) => {
     [`%${q}%`],
     (err, results) => {
       if (err) return res.status(500).json(err);
-      res.json(results);
+
+      const safeResults = results.map((row) => {
+        const { hls_manifest_url, ...rest } = row;
+        return rest;
+      });
+
+      res.json(safeResults);
     }
   );
 };
+
 export const filterByTags = (req, res) => {
   const { tags } = req.query; // ?tags=Comedy,2024
 
@@ -98,7 +120,39 @@ export const filterByTags = (req, res) => {
     [tagArray],
     (err, results) => {
       if (err) return res.status(500).json(err);
-      res.json(results);
+
+      const safeResults = results.map((row) => {
+        const { hls_manifest_url, ...rest } = row;
+        return rest;
+      });
+
+      res.json(safeResults);
+    }
+  );
+};
+
+// 🔒 Protected: fetch the HLS manifest URL for streaming.
+// This is the endpoint the player will call before starting playback.
+export const getManifestById = (req, res) => {
+  const { id } = req.params;
+
+  db.query(
+    "SELECT hls_manifest_url FROM videos WHERE id = ?",
+    [id],
+    (err, results) => {
+      if (err) return res.status(500).json(err);
+      if (!results || results.length === 0)
+        return res.status(404).json("Video not found");
+
+      const manifestUrl =
+        results[0].hls_manifest_url;
+
+      if (!manifestUrl)
+        return res
+          .status(404)
+          .json("No manifest for this video");
+
+      res.json({ manifestUrl });
     }
   );
 };
