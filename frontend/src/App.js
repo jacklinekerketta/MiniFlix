@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import Browse from "./pages/Browse";
 import VideoDetail from "./pages/VideoDetail";
 import SearchResults from "./pages/SearchResults";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   return (
@@ -31,6 +32,11 @@ function App() {
         <Route
           path="/search"
           element={<SearchResults />}
+        />
+
+        <Route
+          path="/error"
+          element={<ErrorPage />}
         />
       </Routes>
     </Router>
