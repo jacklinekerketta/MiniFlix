@@ -4,6 +4,7 @@ import {
   useParams,
 } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import VideoPlayer from "../components/VideoPlayer";
 import { api } from "../services/api";
 import "../styles/Browse.css";
 
@@ -11,17 +12,38 @@ const VideoDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [video, setVideo] = useState(null);
+  const [manifestUrl, setManifestUrl] =
+    useState(null);
 
   useEffect(() => {
     if (!id) return;
 
+    // 1) Public metadata (no manifest URL inside)
     api
       .get(`/videos/${id}`)
       .then((res) => setVideo(res.data))
       .catch((err) => {
         console.error("Failed to load video", err);
       });
-  }, [id]);
+
+    // 2) Protected manifest endpoint – requires auth/session
+    api
+      .get(`/videos/${id}/manifest`)
+      .then((res) =>
+        setManifestUrl(res.data.manifestUrl)
+      )
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          // Not authenticated – send user back to auth flow
+          navigate("/");
+        } else {
+          console.error(
+            "Failed to load manifest",
+            err
+          );
+        }
+      });
+  }, [id, navigate]);
 
   if (!video) {
     return (
@@ -54,13 +76,17 @@ const VideoDetail = () => {
               ×
             </button>
             <div className="video-detail-left">
-              <img
-                src={
-                  video.banner_url ||
-                  video.thumbnail_url
-                }
-                alt={video.title}
-              />
+              {manifestUrl ? (
+                <VideoPlayer src={manifestUrl} />
+              ) : (
+                <img
+                  src={
+                    video.banner_url ||
+                    video.thumbnail_url
+                  }
+                  alt={video.title}
+                />
+              )}
             </div>
 
             <div className="video-detail-right">
@@ -93,22 +119,6 @@ const VideoDetail = () => {
               <p className="video-detail-desc">
                 {video.description}
               </p>
-
-              <div className="hero-buttons">
-                <button
-                  className="play-btn"
-                  onClick={() => {
-                    if (!video.hls_manifest_url)
-                      return;
-                    window.open(
-                      video.hls_manifest_url,
-                      "_blank"
-                    );
-                  }}
-                >
-                  Play
-                </button>
-              </div>
             </div>
           </div>
         </div>
